@@ -1,5 +1,7 @@
 import pygame
 from board_and_pieces import Board
+import copy
+
 
 # Initialize Pygame
 pygame.init()
@@ -40,18 +42,53 @@ def draw_board(screen, board):
         for col in range(COLS):
             draw_row = ROWS - 1 - row
             color = LIGHT_COLOR if (draw_row + col) % 2 == 0 else DARK_COLOR
-            pygame.draw.rect(screen, color, (col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
-            
+            pygame.draw.rect(screen, color, (col * SQUARE_SIZE, draw_row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
             # Draw pieces
-            piece = board.matrix[draw_row][col]
+            piece = board.matrix[row][col]
             if piece is not None:
                 piece_key = f"{piece.color}{piece.id}"
-                screen.blit(piece_images[piece_key], (col * SQUARE_SIZE, row * SQUARE_SIZE))
+                screen.blit(piece_images[piece_key], (col * SQUARE_SIZE, draw_row * SQUARE_SIZE))
+    
+def find_king_position(board, color):
+    for row in range(8):
+        for col in range(8):
+            piece = board.matrix[row][col]
+            if piece and piece.id == 'k' and piece.color == color:
+                return row, col
+    return None
+
 
 def get_square_under_mouse(pos):
     x, y = pos
     row, col = y // SQUARE_SIZE, x // SQUARE_SIZE
     return 7 - row, col
+
+
+def kingsafe(board, turn, start_x, start_y, end_x, end_y):
+    board_copy = copy.deepcopy(board)
+    piece = board.matrix[start_x][start_y]
+    if piece and piece.valid_move(start_x, start_y, end_x, end_y, board_copy):
+        board_copy.matrix[end_x][end_y] = piece
+        board_copy.matrix[start_x][start_y] = None
+        if incheck(board_copy, turn)!=True:
+            board_copy.matrix[end_x][end_y] = None
+            board_copy.matrix[start_x][start_y] = piece
+            return True
+        else:
+            board_copy.matrix[end_x][end_y] = None
+            board_copy.matrix[start_x][start_y] = piece
+            return False
+    
+    
+
+
+def incheck(board, turn):
+    for i in range(len(board.matrix)):
+        for j in range(len(board.matrix[0])):
+            if board.matrix[i][j] and board.matrix[i][j].id != 'k' and board.matrix[i][j].color!=turn and board.matrix[i][j].have_checked(board, i, j):
+                return True
+    return False
+
 
 # Initialize board with pieces
 chess_board = Board()
@@ -62,6 +99,7 @@ running = True
 selected_tile = None
 end_tile = None
 turn = 'w'
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -71,16 +109,21 @@ while running:
             if selected_tile:
                 end_tile = (row, col)
                 piece = chess_board.matrix[selected_tile[0]][selected_tile[1]]
-
+                
                 if piece is not None and piece.color == turn:
+                    # Check if it's a valid move
                     if piece.valid_move(selected_tile[0], selected_tile[1], row, col, chess_board):
-                        chess_board.matrix[end_tile[0]][end_tile[1]] = piece
-                        chess_board.matrix[selected_tile[0]][selected_tile[1]] = None
-                        turn = 'b' if turn == 'w' else 'w'
+                        if kingsafe(chess_board, turn, selected_tile[0], selected_tile[1], row, col):
+                            chess_board.matrix[end_tile[0]][end_tile[1]] = piece
+                            chess_board.matrix[selected_tile[0]][selected_tile[1]] = None
+                            
+                            turn = 'b' if turn == 'w' else 'w'
+                        else:
+                            print("King is Checked")
+
                 selected_tile = None
             else:
                 selected_tile = (row, col) if chess_board.matrix[row][col] is not None else None
-            
 
     # Draw the board and pieces
     draw_board(screen, chess_board)

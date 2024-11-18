@@ -16,7 +16,6 @@ class Board:
         self.matrix[7] = back_rank_black
 
 
-
 class Pawn:
     def __init__(self, color):
         self.color = color
@@ -38,7 +37,21 @@ class Pawn:
             target_piece = board.matrix[end_x][end_y]
             if target_piece and target_piece.color != self.color:
                 return True
+        return False
 
+
+    def have_checked(self, board, start_x, start_y):
+        directions = [[1,1], [1,-1], [-1,1], [-1,-1], [1,0], [0,1], [-1,0], [0,-1]]
+        for i in directions:
+            r, c = start_x, start_y
+            while r+i[0] in range(len(board.matrix)) and c+i[1] in range(len(board.matrix[0])):
+                r+=i[0]
+                c+=i[1]
+                if board.matrix[r][c] is not None:
+                    if board.matrix[r][c].id == 'k' and board.matrix[r][c].color != self.color:
+                        return True
+                    else:
+                        break
 
 class Queen:
     def __init__(self,color):
@@ -61,32 +74,82 @@ class Queen:
                         return True
 
                 # If something is in the way, stop
-                if board.matrix[r][c] is not None:
+                elif board.matrix[r][c] is not None:
                     break
+        return False
+
+
+    def have_checked(self, board, start_x, start_y):
+        directions = [[1,1], [1,-1], [-1,1], [-1,-1], [1,0], [0,1], [-1,0], [0,-1]]
+        for i in directions:
+            r, c = start_x, start_y
+            while r+i[0] in range(len(board.matrix)) and c+i[1] in range(len(board.matrix[0])):
+                r+=i[0]
+                c+=i[1]
+                if board.matrix[r][c] is not None:
+                    if board.matrix[r][c].id == 'k' and board.matrix[r][c].color != self.color:
+                        return True
+                    else:
+                        break
+
 
 
 class King:
     def __init__(self,color):
         self.color = color
         self.id = 'k'
+        self.move = False
+
     def valid_move(self, start_x, start_y, end_x, end_y, board):
         directions = [[1,1], [1,-1], [-1,1], [-1,-1], [1,0], [0,1], [-1,0], [0,-1]]
         target = board.matrix[end_x][end_y]
         for i in directions:
             if start_x + i[0] == end_x and start_y + i[1] == end_y:
                 if target is None:
+                    self.move = True
                     return True
                 # Check Capture
                 elif target.color!= self.color:
-                        return True
+                    self.move = True
+                    return True
+        
+        if (end_x == 0 and (end_y == 6 or end_y == 2)) or (end_x == 7 and (end_y == 6 or end_y == 2)):
+            if self.color == 'w' and (start_x == 0 and start_y == 4) and board.matrix[0][5] is None and board.matrix[0][6] is None and board.matrix[0][7] is not None and board.matrix[0][7].id == 'r' and self.move == False and board.matrix[0][7].move == False:
+                board.matrix[0][5] = board.matrix[0][7]
+                board.matrix[0][7] = None
+                self.move = True
+                return True
+            
+            elif self.color == 'w' and (start_x == 0 and start_y == 4) and board.matrix[0][3] is None and board.matrix[0][2] is None and board.matrix[0][0] is not None and board.matrix[0][0].id == 'r' and self.move == False and board.matrix[0][0].move == False:
+                board.matrix[0][3] = board.matrix[0][0]
+                board.matrix[0][0] = None 
+                self.move = True
+                return True
+
+            elif self.color == 'b' and (start_x == 7 and start_y == 4) and board.matrix[7][5] is None and board.matrix[7][6] is None and board.matrix[7][7] is not None and board.matrix[7][7].id == 'r' and self.move == False and board.matrix[7][7].move == False:
+                board.matrix[7][5] = board.matrix[7][7]
+                board.matrix[7][7] = None
+                self.move = True
+                return True
+            
+            elif self.color == 'b' and (start_x == 7 and start_y == 4) and board.matrix[7][3] is None and board.matrix[7][2] is None and board.matrix[7][0] is not None and board.matrix[7][0].id == 'r' and self.move == False and board.matrix[7][0].move == False:
+                board.matrix[7][3] = board.matrix[7][0]
+                board.matrix[7][0] = None 
+                self.move = True
+                return True
+        return False
+        
+
     
 
 class Rook:
     def __init__(self,color):
         self.color = color
         self.id = 'r'
+        self.move = False
 
     def valid_move(self, start_x, start_y, end_x, end_y, board):
+        self.move = True
         directions = [[1,0], [0,1], [-1,0], [0,-1]]
         target = board.matrix[end_x][end_y]
         for i in directions:
@@ -103,7 +166,21 @@ class Rook:
                 # If something is in the way, stop
                 elif board.matrix[r][c] is not None:
                     break
+        return False
 
+
+    def have_checked(self, board, start_x, start_y):
+        directions = [[1,0], [0,1], [-1,0], [0,-1]]
+        for i in directions:
+            r, c = start_x, start_y
+            while r+i[0] in range(len(board.matrix)) and c+i[1] in range(len(board.matrix[0])):
+                r+=i[0]
+                c+=i[1]
+                if board.matrix[r][c] is not None:
+                    if board.matrix[r][c].id == 'k' and board.matrix[r][c].color != self.color:
+                        return True
+                    else:
+                        break
 
 class Knight:
     def __init__(self,color):
@@ -111,22 +188,42 @@ class Knight:
         self.id = 'n'
     
     def valid_move(self, start_x, start_y, end_x, end_y, board):
-        if (abs(end_x - start_x) == 1 and abs(end_y - start_y) == 2) or (abs(end_x - start_x) == 2 and abs(end_y - start_y) == 1):
-            # Check Capture
-            target_piece = board.matrix[end_x][end_y] 
-            if target_piece is None:
-                return True
-            elif target_piece.color!=self.color:
-                return True
+        directions = [[1,2], [-1,2], [1, -2], [-1,-2], [2,1], [2,-1], [-2,1], [-2,-1]]
+        target = board.matrix[end_x][end_y]
+        for i in directions:
+            r , c = start_x , start_y
+            while r+i[0] in range(len(board.matrix)) and c+i[1] in range(len(board.matrix[0])):
+                r+=i[0]
+                c+=i[1]
+                if r == end_x and c == end_y:
+                    if target is None:
+                        return True
+                    # Check Capture
+                    elif target.color!=self.color:
+                        return True
+
+        return False
+
+    
+    def have_checked(self, board, start_x, start_y):
+        directions = [[1,2], [-1,2], [1, -2], [-1,-2], [2,1], [2,-1], [-2,1], [-2,-1]]
+        for i in directions:
+            r, c = start_x, start_y
+            while r+i[0] in range(len(board.matrix)) and c+i[1] in range(len(board.matrix[0])):
+                r+=i[0]
+                c+=i[1]
+                if board.matrix[r][c] is not None:
+                    if board.matrix[r][c].id == 'k' and board.matrix[r][c].color != self.color:
+                        return True
+
+        return False
+
 
 
 class Bishop:
     def __init__(self,color):
         self.color = color
         self.id = 'b'
-    
-    def __str__(self):
-        return self.id.upper() if self.color == 'w' else self.id.lower()
     
     def valid_move(self, start_x, start_y, end_x, end_y, board):
         directions = [[1,1], [1,-1], [-1,1], [-1,-1]]
@@ -144,8 +241,23 @@ class Bishop:
                         return True
 
                 # If something is in the way, stop
-                if board.matrix[r][c] is not None:
+                elif board.matrix[r][c] is not None:
                     break
+
+        return False
+
+    def have_checked(self, board, start_x, start_y):
+        directions = [[1,1], [1,-1], [-1,1], [-1,-1]]
+        for i in directions:
+            r, c = start_x, start_y
+            while r+i[0] in range(len(board.matrix)) and c+i[1] in range(len(board.matrix[0])):
+                r+=i[0]
+                c+=i[1]
+                if board.matrix[r][c] is not None:
+                    if board.matrix[r][c].id == 'k' and board.matrix[r][c].color != self.color:
+                        return True
+                    else:
+                        break
 
 
     
