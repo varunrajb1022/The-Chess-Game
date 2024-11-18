@@ -49,14 +49,6 @@ def draw_board(screen, board):
                 piece_key = f"{piece.color}{piece.id}"
                 screen.blit(piece_images[piece_key], (col * SQUARE_SIZE, draw_row * SQUARE_SIZE))
     
-def find_king_position(board, color):
-    for row in range(8):
-        for col in range(8):
-            piece = board.matrix[row][col]
-            if piece and piece.id == 'k' and piece.color == color:
-                return row, col
-    return None
-
 
 def get_square_under_mouse(pos):
     x, y = pos
@@ -65,29 +57,50 @@ def get_square_under_mouse(pos):
 
 
 def kingsafe(board, turn, start_x, start_y, end_x, end_y):
-    board_copy = copy.deepcopy(board)
-    piece = board.matrix[start_x][start_y]
-    if piece and piece.valid_move(start_x, start_y, end_x, end_y, board_copy):
+    board_copy = Board()
+    for i in range(len(board.matrix)):
+        for j in range(len(board.matrix[i])):
+            board_copy.matrix[i][j] = board.matrix[i][j]
+
+    piece = board_copy.matrix[start_x][start_y]
+    Flag = True
+
+    if piece and piece.valid_move(start_x, start_y, end_x, end_y, board):
         board_copy.matrix[end_x][end_y] = piece
         board_copy.matrix[start_x][start_y] = None
-        if incheck(board_copy, turn)!=True:
-            board_copy.matrix[end_x][end_y] = None
-            board_copy.matrix[start_x][start_y] = piece
-            return True
-        else:
-            board_copy.matrix[end_x][end_y] = None
-            board_copy.matrix[start_x][start_y] = piece
-            return False
+        if incheck(board_copy, turn):
+            Flag = False
+    return Flag
     
     
-
-
 def incheck(board, turn):
     for i in range(len(board.matrix)):
         for j in range(len(board.matrix[0])):
             if board.matrix[i][j] and board.matrix[i][j].id != 'k' and board.matrix[i][j].color!=turn and board.matrix[i][j].have_checked(board, i, j):
                 return True
     return False
+
+
+def check_mated(board, turn):
+    board_copy = Board()
+    for i in range(len(board.matrix)):
+        for j in range(len(board.matrix[i])):
+            board_copy.matrix[i][j] = board.matrix[i][j]
+
+    opponent = 'b' if turn == 'w' else 'w'
+    for i in range(len(board.matrix)):
+        for j in range(len(board.matrix[0])):
+            if board.matrix[i][j] and board.matrix[i][j].color==turn:
+                piece = board_copy.matrix[i][j]
+                Flag = True
+
+                if piece and piece.valid_move(start_x, start_y, end_x, end_y, board):
+                    board_copy.matrix[end_x][end_y] = piece
+                    board_copy.matrix[start_x][start_y] = None
+                    if not incheck(board_copy, turn):
+                        Flag = False
+                return Flag
+
 
 
 # Initialize board with pieces
@@ -116,10 +129,12 @@ while running:
                         if kingsafe(chess_board, turn, selected_tile[0], selected_tile[1], row, col):
                             chess_board.matrix[end_tile[0]][end_tile[1]] = piece
                             chess_board.matrix[selected_tile[0]][selected_tile[1]] = None
-                            
-                            turn = 'b' if turn == 'w' else 'w'
+                            if check_mate(chess_board, turn):
+                                print('Checkmate')
+                            else:
+                                turn = 'b' if turn == 'w' else 'w'
                         else:
-                            print("King is Checked")
+                            print("King will be left vulnerable")
 
                 selected_tile = None
             else:

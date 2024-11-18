@@ -1,3 +1,4 @@
+
 class Board:
     def __init__(self):
         self.matrix = [[None for _ in range(8)] for _ in range(8)]
@@ -41,17 +42,14 @@ class Pawn:
 
 
     def have_checked(self, board, start_x, start_y):
-        directions = [[1,1], [1,-1], [-1,1], [-1,-1], [1,0], [0,1], [-1,0], [0,-1]]
+        directions =  [[1, -1], [1, 1]] if self.color == 'w' else [[-1, -1], [-1, 1]]
         for i in directions:
-            r, c = start_x, start_y
-            while r+i[0] in range(len(board.matrix)) and c+i[1] in range(len(board.matrix[0])):
-                r+=i[0]
-                c+=i[1]
-                if board.matrix[r][c] is not None:
-                    if board.matrix[r][c].id == 'k' and board.matrix[r][c].color != self.color:
-                        return True
-                    else:
-                        break
+            r, c = start_x + i[0], start_y + i[1]
+            if r in range(len(board.matrix)) and c in range(len(board.matrix[0])):
+                if board.matrix[r][c] is not None and board.matrix[r][c].id == 'k' and board.matrix[r][c].color != self.color:
+                    return True
+        return False
+
 
 class Queen:
     def __init__(self,color):
@@ -91,6 +89,7 @@ class Queen:
                         return True
                     else:
                         break
+        return False
 
 
 
@@ -138,7 +137,21 @@ class King:
                 self.move = True
                 return True
         return False
-        
+
+    def have_checked(self, board, start_x, start_y):
+        # Define the directions the King can attack
+        directions = [[1, 1], [1, -1], [-1, 1], [-1, -1], [1, 0], [0, 1], [-1, 0], [0, -1]]
+
+        for direction in directions:
+            new_x, new_y = start_x + direction[0], start_y + direction[1]
+            # Ensure the position is within bounds
+            if 0 <= new_x < len(board.matrix) and 0 <= new_y < len(board.matrix[0]):
+                target = board.matrix[new_x][new_y]
+                # Check if the target is an opposing king
+                if target and target.id == 'k' and target.color != self.color:
+                    return True
+        return False
+            
 
     
 
@@ -181,6 +194,8 @@ class Rook:
                         return True
                     else:
                         break
+        return False
+    
 
 class Knight:
     def __init__(self,color):
@@ -206,18 +221,14 @@ class Knight:
 
     
     def have_checked(self, board, start_x, start_y):
-        directions = [[1,2], [-1,2], [1, -2], [-1,-2], [2,1], [2,-1], [-2,1], [-2,-1]]
+        directions = [[1, 2], [-1, 2], [1, -2], [-1, -2], [2, 1], [2, -1], [-2, 1], [-2, -1]]
         for i in directions:
-            r, c = start_x, start_y
-            while r+i[0] in range(len(board.matrix)) and c+i[1] in range(len(board.matrix[0])):
-                r+=i[0]
-                c+=i[1]
-                if board.matrix[r][c] is not None:
-                    if board.matrix[r][c].id == 'k' and board.matrix[r][c].color != self.color:
-                        return True
-
+            r, c = start_x + i[0], start_y + i[1]
+            if r in range(len(board.matrix)) and c in range(len(board.matrix[0])):
+                target = board.matrix[r][c]
+                if target is not None and target.id == 'k' and target.color != self.color:
+                    return True
         return False
-
 
 
 class Bishop:
@@ -258,6 +269,7 @@ class Bishop:
                         return True
                     else:
                         break
+        return False
 
 
     
