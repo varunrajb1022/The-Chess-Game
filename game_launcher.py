@@ -82,24 +82,15 @@ def incheck(board, turn):
 
 
 def check_mated(board, turn):
-    board_copy = Board()
-    for i in range(len(board.matrix)):
-        for j in range(len(board.matrix[i])):
-            board_copy.matrix[i][j] = board.matrix[i][j]
-
-    opponent = 'b' if turn == 'w' else 'w'
+    turn = 'b' if turn == 'w' else 'w'
     for i in range(len(board.matrix)):
         for j in range(len(board.matrix[0])):
             if board.matrix[i][j] and board.matrix[i][j].color==turn:
-                piece = board_copy.matrix[i][j]
-                Flag = True
-
-                if piece and piece.valid_move(start_x, start_y, end_x, end_y, board):
-                    board_copy.matrix[end_x][end_y] = piece
-                    board_copy.matrix[start_x][start_y] = None
-                    if not incheck(board_copy, turn):
-                        Flag = False
-                return Flag
+                valid_moves = board.matrix[i][j].get_valid_moves(i,j,board)
+                for k in valid_moves:
+                    if kingsafe(board, turn, i, j, k[0], k[1]):
+                        return False
+    return True
 
 
 
@@ -129,7 +120,9 @@ while running:
                         if kingsafe(chess_board, turn, selected_tile[0], selected_tile[1], row, col):
                             chess_board.matrix[end_tile[0]][end_tile[1]] = piece
                             chess_board.matrix[selected_tile[0]][selected_tile[1]] = None
-                            if check_mate(chess_board, turn):
+                            if piece.id == 'r' or piece.id == 'k':
+                                piece.move = True
+                            if check_mated(chess_board, turn):
                                 print('Checkmate')
                             else:
                                 turn = 'b' if turn == 'w' else 'w'

@@ -50,6 +50,13 @@ class Pawn:
                     return True
         return False
 
+    def get_valid_moves(self, start_x, start_y, board):
+        valid_moves = set()
+        for end_x in range(8):
+            for end_y in range(8):
+                if self.valid_move(start_x, start_y, end_x, end_y, board):
+                    valid_moves.add((end_x, end_y))
+        return valid_moves
 
 class Queen:
     def __init__(self,color):
@@ -90,6 +97,14 @@ class Queen:
                     else:
                         break
         return False
+    
+    def get_valid_moves(self, start_x, start_y, board):
+        valid_moves = set()
+        for end_x in range(8):
+            for end_y in range(8):
+                if self.valid_move(start_x, start_y, end_x, end_y, board):
+                    valid_moves.add((end_x, end_y))
+        return valid_moves
 
 
 
@@ -105,52 +120,58 @@ class King:
         for i in directions:
             if start_x + i[0] == end_x and start_y + i[1] == end_y:
                 if target is None:
-                    self.move = True
                     return True
                 # Check Capture
                 elif target.color!= self.color:
-                    self.move = True
                     return True
         
-        if (end_x == 0 and (end_y == 6 or end_y == 2)) or (end_x == 7 and (end_y == 6 or end_y == 2)):
-            if self.color == 'w' and (start_x == 0 and start_y == 4) and board.matrix[0][5] is None and board.matrix[0][6] is None and board.matrix[0][7] is not None and board.matrix[0][7].id == 'r' and self.move == False and board.matrix[0][7].move == False:
-                board.matrix[0][5] = board.matrix[0][7]
-                board.matrix[0][7] = None
-                self.move = True
-                return True
+        
+        if self.color == 'w' and (start_x == 0 and start_y == 4) and (end_x == 0 and end_y == 6) and board.matrix[0][5] is None and board.matrix[0][6] is None and board.matrix[0][7] is not None and board.matrix[0][7].id == 'r' and self.move == False and board.matrix[0][7].move == False:
             
-            elif self.color == 'w' and (start_x == 0 and start_y == 4) and board.matrix[0][3] is None and board.matrix[0][2] is None and board.matrix[0][0] is not None and board.matrix[0][0].id == 'r' and self.move == False and board.matrix[0][0].move == False:
-                board.matrix[0][3] = board.matrix[0][0]
-                board.matrix[0][0] = None 
-                self.move = True
-                return True
+            board.matrix[0][5] = board.matrix[0][7]
+            board.matrix[0][7] = None
+            self.move = True
+            return True
+        
+        elif self.color == 'w' and (start_x == 0 and start_y == 4) and (end_x == 0 and end_y == 2) and board.matrix[0][3] is None and board.matrix[0][2] is None and board.matrix[0][0] is not None and board.matrix[0][0].id == 'r' and self.move == False and board.matrix[0][0].move == False:
+            board.matrix[0][3] = board.matrix[0][0]
+            board.matrix[0][0] = None 
+            self.move = True
+            return True
 
-            elif self.color == 'b' and (start_x == 7 and start_y == 4) and board.matrix[7][5] is None and board.matrix[7][6] is None and board.matrix[7][7] is not None and board.matrix[7][7].id == 'r' and self.move == False and board.matrix[7][7].move == False:
-                board.matrix[7][5] = board.matrix[7][7]
-                board.matrix[7][7] = None
-                self.move = True
-                return True
-            
-            elif self.color == 'b' and (start_x == 7 and start_y == 4) and board.matrix[7][3] is None and board.matrix[7][2] is None and board.matrix[7][0] is not None and board.matrix[7][0].id == 'r' and self.move == False and board.matrix[7][0].move == False:
-                board.matrix[7][3] = board.matrix[7][0]
-                board.matrix[7][0] = None 
-                self.move = True
-                return True
-        return False
+        elif self.color == 'b' and (start_x == 7 and start_y == 4) and (end_x == 7 and end_y == 6) and board.matrix[7][5] is None and board.matrix[7][6] is None and board.matrix[7][7] is not None and board.matrix[7][7].id == 'r' and self.move == False and board.matrix[7][7].move == False:
+            board.matrix[7][5] = board.matrix[7][7]
+            board.matrix[7][7] = None
+            self.move = True
+            return True
+        
+        elif self.color == 'b' and (start_x == 7 and start_y == 4) and (end_x == 7 and end_y == 2) and board.matrix[7][3] is None and board.matrix[7][2] is None and board.matrix[7][0] is not None and board.matrix[7][0].id == 'r' and self.move == False and board.matrix[7][0].move == False:
+            board.matrix[7][3] = board.matrix[7][0]
+            board.matrix[7][0] = None 
+            self.move = True
+            return True
+
+        else:
+            return False
 
     def have_checked(self, board, start_x, start_y):
-        # Define the directions the King can attack
         directions = [[1, 1], [1, -1], [-1, 1], [-1, -1], [1, 0], [0, 1], [-1, 0], [0, -1]]
 
         for direction in directions:
             new_x, new_y = start_x + direction[0], start_y + direction[1]
-            # Ensure the position is within bounds
             if 0 <= new_x < len(board.matrix) and 0 <= new_y < len(board.matrix[0]):
                 target = board.matrix[new_x][new_y]
-                # Check if the target is an opposing king
                 if target and target.id == 'k' and target.color != self.color:
                     return True
         return False
+    
+    def get_valid_moves(self, start_x, start_y, board):
+        valid_moves = set()
+        for end_x in range(8):
+            for end_y in range(8):
+                if self.valid_move(start_x, start_y, end_x, end_y, board):
+                    valid_moves.add((end_x, end_y))
+        return valid_moves
             
 
     
@@ -162,7 +183,6 @@ class Rook:
         self.move = False
 
     def valid_move(self, start_x, start_y, end_x, end_y, board):
-        self.move = True
         directions = [[1,0], [0,1], [-1,0], [0,-1]]
         target = board.matrix[end_x][end_y]
         for i in directions:
@@ -195,6 +215,14 @@ class Rook:
                     else:
                         break
         return False
+
+    def get_valid_moves(self, start_x, start_y, board):
+        valid_moves = set()
+        for end_x in range(8):
+            for end_y in range(8):
+                if self.valid_move(start_x, start_y, end_x, end_y, board):
+                    valid_moves.add((end_x, end_y))
+        return valid_moves
     
 
 class Knight:
@@ -229,6 +257,14 @@ class Knight:
                 if target is not None and target.id == 'k' and target.color != self.color:
                     return True
         return False
+
+    def get_valid_moves(self, start_x, start_y, board):
+        valid_moves = set()
+        for end_x in range(8):
+            for end_y in range(8):
+                if self.valid_move(start_x, start_y, end_x, end_y, board):
+                    valid_moves.add((end_x, end_y))
+        return valid_moves
 
 
 class Bishop:
@@ -270,6 +306,15 @@ class Bishop:
                     else:
                         break
         return False
+
+    
+    def get_valid_moves(self, start_x, start_y, board):
+        valid_moves = set()
+        for end_x in range(8):
+            for end_y in range(8):
+                if self.valid_move(start_x, start_y, end_x, end_y, board):
+                    valid_moves.add((end_x, end_y))
+        return valid_moves
 
 
     
