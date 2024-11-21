@@ -63,14 +63,14 @@ def kingsafe(board, turn, start_x, start_y, end_x, end_y):
             board_copy.matrix[i][j] = board.matrix[i][j]
 
     piece = board_copy.matrix[start_x][start_y]
-    Flag = True
-
     if piece and piece.valid_move(start_x, start_y, end_x, end_y, board):
         board_copy.matrix[end_x][end_y] = piece
         board_copy.matrix[start_x][start_y] = None
         if incheck(board_copy, turn):
-            Flag = False
-    return Flag
+            board_copy = None
+            return False
+    board_copy = None
+    return True
     
     
 def incheck(board, turn):
@@ -123,7 +123,10 @@ while running:
                             if piece.id == 'r' or piece.id == 'k':
                                 piece.move = True
                             if check_mated(chess_board, turn):
-                                print('Checkmate')
+                                if not incheck(chess_board, 'b' if turn == 'w' else 'w'):
+                                    print('stalemate')
+                                else:
+                                    print('Checkmate')
                             else:
                                 turn = 'b' if turn == 'w' else 'w'
                         else:

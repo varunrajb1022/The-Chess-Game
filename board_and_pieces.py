@@ -114,7 +114,7 @@ class King:
         self.id = 'k'
         self.move = False
 
-    def valid_move(self, start_x, start_y, end_x, end_y, board):
+    def valid_move(self, start_x, start_y, end_x, end_y, board, mt = 'n'):
         directions = [[1,1], [1,-1], [-1,1], [-1,-1], [1,0], [0,1], [-1,0], [0,-1]]
         target = board.matrix[end_x][end_y]
         for i in directions:
@@ -126,26 +126,26 @@ class King:
                     return True
         
         
-        if self.color == 'w' and (start_x == 0 and start_y == 4) and (end_x == 0 and end_y == 6) and board.matrix[0][5] is None and board.matrix[0][6] is None and board.matrix[0][7] is not None and board.matrix[0][7].id == 'r' and self.move == False and board.matrix[0][7].move == False:
+        if self.color == 'w' and (start_x == 0 and start_y == 4) and (end_x == 0 and end_y == 6) and board.matrix[0][5] is None and board.matrix[0][6] is None and board.matrix[0][7] is not None and board.matrix[0][7].id == 'r' and self.move == False and board.matrix[0][7].move == False and mt == 'n':
             
             board.matrix[0][5] = board.matrix[0][7]
             board.matrix[0][7] = None
             self.move = True
             return True
         
-        elif self.color == 'w' and (start_x == 0 and start_y == 4) and (end_x == 0 and end_y == 2) and board.matrix[0][3] is None and board.matrix[0][2] is None and board.matrix[0][0] is not None and board.matrix[0][0].id == 'r' and self.move == False and board.matrix[0][0].move == False:
+        elif self.color == 'w' and (start_x == 0 and start_y == 4) and (end_x == 0 and end_y == 2) and board.matrix[0][3] is None and board.matrix[0][2] is None and board.matrix[0][0] is not None and board.matrix[0][0].id == 'r' and self.move == False and board.matrix[0][0].move == False and mt == 'n':
             board.matrix[0][3] = board.matrix[0][0]
             board.matrix[0][0] = None 
             self.move = True
             return True
 
-        elif self.color == 'b' and (start_x == 7 and start_y == 4) and (end_x == 7 and end_y == 6) and board.matrix[7][5] is None and board.matrix[7][6] is None and board.matrix[7][7] is not None and board.matrix[7][7].id == 'r' and self.move == False and board.matrix[7][7].move == False:
+        elif self.color == 'b' and (start_x == 7 and start_y == 4) and (end_x == 7 and end_y == 6) and board.matrix[7][5] is None and board.matrix[7][6] is None and board.matrix[7][7] is not None and board.matrix[7][7].id == 'r' and self.move == False and board.matrix[7][7].move == False and mt == 'n':
             board.matrix[7][5] = board.matrix[7][7]
             board.matrix[7][7] = None
             self.move = True
             return True
         
-        elif self.color == 'b' and (start_x == 7 and start_y == 4) and (end_x == 7 and end_y == 2) and board.matrix[7][3] is None and board.matrix[7][2] is None and board.matrix[7][0] is not None and board.matrix[7][0].id == 'r' and self.move == False and board.matrix[7][0].move == False:
+        elif self.color == 'b' and (start_x == 7 and start_y == 4) and (end_x == 7 and end_y == 2) and board.matrix[7][3] is None and board.matrix[7][2] is None and board.matrix[7][0] is not None and board.matrix[7][0].id == 'r' and self.move == False and board.matrix[7][0].move == False and mt == 'n':
             board.matrix[7][3] = board.matrix[7][0]
             board.matrix[7][0] = None 
             self.move = True
@@ -158,9 +158,9 @@ class King:
         directions = [[1, 1], [1, -1], [-1, 1], [-1, -1], [1, 0], [0, 1], [-1, 0], [0, -1]]
 
         for direction in directions:
-            new_x, new_y = start_x + direction[0], start_y + direction[1]
-            if 0 <= new_x < len(board.matrix) and 0 <= new_y < len(board.matrix[0]):
-                target = board.matrix[new_x][new_y]
+            r, c = start_x + direction[0], start_y + direction[1]
+            if r in range(len(board.matrix)) and c in range(len(board.matrix[0])):
+                target = board.matrix[r][c]
                 if target and target.id == 'k' and target.color != self.color:
                     return True
         return False
@@ -169,7 +169,7 @@ class King:
         valid_moves = set()
         for end_x in range(8):
             for end_y in range(8):
-                if self.valid_move(start_x, start_y, end_x, end_y, board):
+                if self.valid_move(start_x, start_y, end_x, end_y, board, 'castle'):
                     valid_moves.add((end_x, end_y))
         return valid_moves
             
