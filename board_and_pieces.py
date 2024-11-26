@@ -1,4 +1,3 @@
-
 class Board:
     def __init__(self):
         self.matrix = [[None for _ in range(8)] for _ in range(8)]
@@ -127,25 +126,56 @@ class King:
         
         
         if self.color == 'w' and (start_x == 0 and start_y == 4) and (end_x == 0 and end_y == 6) and board.matrix[0][5] is None and board.matrix[0][6] is None and board.matrix[0][7] is not None and board.matrix[0][7].id == 'r' and self.move == False and board.matrix[0][7].move == False and mt == 'n':
-            
+            for i in range(len(board.matrix)):
+                for j in range(len(board.matrix[0])):
+                    if board.matrix[i][j] and board.matrix[i][j].color!=self.color:
+                        valid_moves = board.matrix[i][j].get_valid_moves(i,j,board)
+                        if (0,6) in valid_moves or (0,7) in valid_moves:
+                            return False
+                        else:
+                            continue     
             board.matrix[0][5] = board.matrix[0][7]
             board.matrix[0][7] = None
             self.move = True
             return True
         
         elif self.color == 'w' and (start_x == 0 and start_y == 4) and (end_x == 0 and end_y == 2) and board.matrix[0][3] is None and board.matrix[0][2] is None and board.matrix[0][0] is not None and board.matrix[0][0].id == 'r' and self.move == False and board.matrix[0][0].move == False and mt == 'n':
+            for i in range(len(board.matrix)):
+                for j in range(len(board.matrix[0])):
+                    if board.matrix[i][j] and board.matrix[i][j].color!=self.color:
+                        valid_moves = board.matrix[i][j].get_valid_moves(i,j,board)
+                        if (0,3) in valid_moves or (0,2) in valid_moves:
+                            return False
+                        else:
+                            continue 
             board.matrix[0][3] = board.matrix[0][0]
             board.matrix[0][0] = None 
             self.move = True
             return True
 
         elif self.color == 'b' and (start_x == 7 and start_y == 4) and (end_x == 7 and end_y == 6) and board.matrix[7][5] is None and board.matrix[7][6] is None and board.matrix[7][7] is not None and board.matrix[7][7].id == 'r' and self.move == False and board.matrix[7][7].move == False and mt == 'n':
+            for i in range(len(board.matrix)):
+                for j in range(len(board.matrix[0])):
+                    if board.matrix[i][j] and board.matrix[i][j].color!=self.color:
+                        valid_moves = board.matrix[i][j].get_valid_moves(i,j,board)
+                        if (7,5) in valid_moves or (7,6) in valid_moves:
+                            return False
+                        else:
+                            continue 
             board.matrix[7][5] = board.matrix[7][7]
             board.matrix[7][7] = None
             self.move = True
             return True
         
         elif self.color == 'b' and (start_x == 7 and start_y == 4) and (end_x == 7 and end_y == 2) and board.matrix[7][3] is None and board.matrix[7][2] is None and board.matrix[7][0] is not None and board.matrix[7][0].id == 'r' and self.move == False and board.matrix[7][0].move == False and mt == 'n':
+            for i in range(len(board.matrix)):
+                for j in range(len(board.matrix[0])):
+                    if board.matrix[i][j] and board.matrix[i][j].color!=self.color:
+                        valid_moves = board.matrix[i][j].get_valid_moves(i,j,board)
+                        if (7,3) in valid_moves or (7,2) in valid_moves:
+                            return False
+                        else:
+                            continue 
             board.matrix[7][3] = board.matrix[7][0]
             board.matrix[7][0] = None 
             self.move = True
