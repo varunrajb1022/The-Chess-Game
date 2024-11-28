@@ -46,26 +46,6 @@ pip install pygame
 - **Pygame-based UI**: The game is built using Pygame for the graphical interface.
 - **Flip Button**: Board can be flipped when needed.
 
-## Screenshots 📸
-
-Below are some screenshots of the game's user interface:
-
-![Chess Game Board](images/Screenshots/Opening.png)
-*This is a screenshot of the chess board in play.*
-
-![Flip Feature](images/Screenshots/Flip.png)
-*This shows how to flip the board.*
-
-![Checkmate State](images/Screenshots/Checkmate.png)
-*This shows the checkmate state with pieces in place.*
-
-![Pawn Promotion](images/Screenshots/Pawn%20Promotion.png)
-![Pawn Promotion](images/Screenshots/Pawn%20Promotion.png)
-*This Shows Pawn Promotion UI.*
-
-![Stalemate State](images/Screenshots/Stalemate.png)
-*This shows the Stalemate state with pieces in place.*
-
 ## Missing Features ❌
 
 - **En Passant**: Currently not supported.
