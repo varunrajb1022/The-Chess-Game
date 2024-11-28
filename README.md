@@ -50,20 +50,19 @@ pip install pygame
 
 Below are some screenshots of the game's user interface:
 
-![Chess Game Board](images\Screenshots\Opening.png)
+<img src="images/Screenshots/Opening.png" width="400" />
 *This is a screenshot of the chess board in play.*
 
-![Flip Feature](images\Screenshots\Flip.png)
+<img src="images/Screenshots/Flip.png" width="400" />
 *This shows how to flip the board.*
 
-![Checkmate State](images\Screenshots\Checkmate.png)
+<img src="images/Screenshots/Checkmate.png" width="400" />
 *This shows the checkmate state with pieces in place.*
 
-![Pawn Promotion](images/Screenshots/Pawn%20Promotion.png)
-![Pawn Promotion](images/Screenshots/Pawn%20Promotion.png)
-*This Shows Pawn Promotion UI.*
+<img src="images/Screenshots/Pawn%20Promotion.png" width="400" />
+*This shows the Pawn Promotion UI.*
 
-![Stalemate State](images\Screenshots\Stalemate.png)
+<img src="images/Screenshots/Stalemate.png" width="400" />
 *This shows the Stalemate state with pieces in place.*
 
 ## Missing Features ❌
