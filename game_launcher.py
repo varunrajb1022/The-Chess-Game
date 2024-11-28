@@ -21,13 +21,13 @@ font = pygame.font.Font(None, 36)
 
 # Set up display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Chess Board")
 
 BUTTON_WIDTH = 50
 BUTTON_HEIGHT = 50
 BUTTON_X, BUTTON_Y = 750, 750  
 
-flip_button_image = pygame.image.load('images/Flip.png')  #
+# Flip button initialization
+flip_button_image = pygame.image.load('images/Flip.png')  
 flip_button_image = pygame.transform.scale(flip_button_image, (50, 50)) 
 flipped = True
 
@@ -290,10 +290,17 @@ while running:
     # Draw the board and pieces
     draw_board(screen, chess_board, flipped)
     draw_flip_button(screen)
+    # Display Turn
+    if turn == 'b':
+        pygame.display.set_caption("Chess Board - Black")
+    else:
+        pygame.display.set_caption("Chess Board - White")
+    # Display checkmate/stalemate
     if checkmate:
         draw_checkmate(screen, 'b' if turn == 'w' else 'w')
     if stalemate:
         draw_stalemate(screen)
+
 
     pygame.display.flip()
 
